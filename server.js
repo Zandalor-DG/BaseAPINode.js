@@ -4,20 +4,22 @@ const cors = require("cors");
 
 const app = express();
 
+require("./routes/auth.routes")(app);
+require("./routes/user.routes")(app);
+
 let corsOptions = {
   origin: "http://localhost:5051",
 };
 
 app.use(cors(corsOptions));
 
-// app.use(bodyParser.json);
+app.use(bodyParser.json);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //********************************************************** */
 
-const db = require("./app/models");
-const { initial } = require("lodash");
+const db = require("./models");
 const Role = db.role;
 
 db.sequelize.sync({ force: true }).then(() => {

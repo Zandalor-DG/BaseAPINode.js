@@ -1,8 +1,8 @@
 module.exports = {
   HOST: "localhost",
   USER: "Zandalor-DG",
-  PASSWORD: "123654789",
-  DB: "testdb",
+  PASSWORD: 123654789,
+  DB: "database_API",
   dialect: "postgres",
   pool: {
     max: 5,
