@@ -1,23 +1,36 @@
 {
-  "name": "baseapinode",
-  "version": "0.0.0",
-  "private": true,
+  "name": "base_api_node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
   "scripts": {
-    "start": "node ./bin/www",
-    "exe": "DEBUG=baseapinode:* npm start"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zandalor-DG/BaseAPINode.js.git"
+  },
+  "keywords": [
+    "node js",
+    "jwt",
+    "authentication",
+    "express",
+    "postgresql"
+  ],
+  "author": "Zandalor-DG",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zandalor-DG/BaseAPINode.js/issues"
+  },
+  "homepage": "https://github.com/Zandalor-DG/BaseAPINode.js#readme",
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "dotenv": "^8.2.0",
-    "express": "~4.16.1",
-    "hbs": "~4.0.4",
-    "http-errors": "~1.6.3",
-    "morgan": "~1.9.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
-    "pg-promise": "^10.8.1",
-    "sequelize": "^6.3.5",
-    "sequelize-cli": "^6.2.0"
+    "sequelize": "^6.3.5"
   }
 }
