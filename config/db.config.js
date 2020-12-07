@@ -1,7 +1,7 @@
 module.exports = {
   HOST: "localhost",
-  USER: "Zandalor-DG",
-  PASSWORD: 123654789,
+  USER: "zandalor",
+  PASSWORD: "fusion",
   DB: "database_API",
   dialect: "postgres",
   pool: {

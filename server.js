@@ -17,8 +17,6 @@ app.use(bodyParser.json);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//********************************************************** */
-
 const db = require("./models");
 const Role = db.role;
 
@@ -27,7 +25,6 @@ db.sequelize.sync({ force: true }).then(() => {
   initial();
 });
 
-//********************************************************** */
 function initial() {
   Role.create({
     id: 1,
@@ -44,7 +41,7 @@ function initial() {
     name: "admin",
   });
 }
-//********************************************************* */
+
 app.get("/", (req, res) => {
   res.json({ message: "welcome" });
 });
