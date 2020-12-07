@@ -4,18 +4,19 @@ const cors = require("cors");
 
 const app = express();
 
-require("./routes/auth.routes")(app);
-require("./routes/user.routes")(app);
-
 let corsOptions = {
   origin: "http://localhost:5051",
 };
 
 app.use(cors(corsOptions));
 
-app.use(bodyParser.json);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.use(bodyParser.urlencoded({ extended: true }));
+require("./routes/auth.routes")(app);
+require("./routes/user.routes")(app);
+
+// app.use(bodyParser.urlencoded({ extended: false }));
 
 const db = require("./models");
 const Role = db.role;
