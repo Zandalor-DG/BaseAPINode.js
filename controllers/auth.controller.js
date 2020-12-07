@@ -5,83 +5,63 @@ const Role = db.role;
 
 const Op = db.Sequelize.Op;
 
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+let jwt = require("jsonwebtoken");
+let bcrypt = require("bcryptjs");
 
 exports.signUp = (req, res) => {
-  User.create({
+  const userRole = Roles.findOne({
+    where: { name: "user" },
+  }).then(user);
+
+  Users.create({
     fullName: req.body.fullName,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
     dob: req.body.dob,
-  })
-    .then((user) => {
-      if (req.body.roles) {
-        Role.findAll({
-          where: {
-            name: {
-              [Op.or]: req.body.roles,
-            },
-          },
-        }).then((roles) => {
-          user.setRoles(roles).then(() => {
-            res.send({ message: "User was registered successfully!" });
-          });
-        });
-      } else {
-        user.setRoles([1]).then(() => {
-          res.send({ message: "User was registered successfully!" });
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
+    roleId: userRole.id,
+  }).catch((err) => {
+    res.status(500).send({ message: err.message });
+  });
 };
 
 exports.signIn = (req, res) => {
   User.findOne({
     where: {
-      fullName: req.body.fullName,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
     },
-  })
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
+  }).then((user) => {
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
 
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+    let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!",
-        });
-      }
-
-      var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400,
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!",
       });
+    }
 
-      var authorities = [];
-      user.getRoles().then((roles) => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push("ROLE_" + roles[i].name.toUpperCase());
-        }
-        res.status(200).send({
-          id: user.id,
-          fullName: user.fullName,
-          email: user.email,
-          dob: user.dob,
-          roles: authorities,
-          accessToken: token,
-        });
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
+    let token = jwt.sign({ id: user.id }, config.secret, {
+      expiresIn: 86400,
     });
+
+    let userRole = Role.findByPk(user.roleId);
+
+    res
+      .status(200)
+      .send({
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        dob: user.dob,
+        roles: userRole.name,
+        accessToken: token,
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message });
+      });
+  });
 };
