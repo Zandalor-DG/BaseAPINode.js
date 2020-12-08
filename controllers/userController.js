@@ -9,8 +9,6 @@ const checkValue = (valueCheck, response, method) => {
 
 exports.putUser = async (req, res) => {
   try {
-    checkValue(req.body, res, "putUser");
-
     const newRole = models.Role.findOne({ where: { id: req.body.roleId } });
 
     checkValue(newRole, res, "putUser");
@@ -32,6 +30,10 @@ exports.putUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     checkValue(req.body, res, "deleteUser");
+    const { id } = req.body;
+    if (!id) {
+      throw new Error("Id is not presented");
+    }
 
     models.User.destroy({
       where: {
@@ -41,7 +43,7 @@ exports.deleteUser = async (req, res) => {
 
     res.json({ message: "User deleted" });
   } catch (err) {
-    res.status(500).json({ message: "server error, please try again", err });
+    res.status(400).json({ message: err.message });
   }
 };
 

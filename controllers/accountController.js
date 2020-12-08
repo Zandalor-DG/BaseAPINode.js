@@ -47,7 +47,7 @@ exports.signIn = async (req, res) => {
       fullName: user.fullName,
       email: user.email,
       dob: user.dob,
-      role: roleUserAuth.name,
+      role: roleUserAuth.dataValues.name,
     };
     res.json({ userData, tokens });
   } catch (err) {
