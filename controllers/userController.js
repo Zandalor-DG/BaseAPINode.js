@@ -1,4 +1,5 @@
 const models = require("../database/models");
+const tokenChecker = require("../middleware/tokenChecker");
 
 const checkValue = (valueCheck, response, method) => {
   if (!valueCheck) {
@@ -7,16 +8,16 @@ const checkValue = (valueCheck, response, method) => {
   }
 };
 
-exports.putUser = async (req, res) => {
+exports.putUser = async (req, res, next) => {
   try {
-    const newRole = models.Role.findOne({ where: { id: req.body.roleId } });
+    tokenChecker(req, res, next);
 
     if (
       !req.body.fullName ||
       !req.body.email ||
       !req.body.password ||
       !req.body.dob ||
-      !newRole.id
+      !req.body.roleId
     ) {
       throw new Error("Data put user is not presented");
     }
@@ -26,7 +27,7 @@ exports.putUser = async (req, res) => {
       email: req.body.email,
       password: req.body.password,
       dob: req.body.dob,
-      roleId: newRole.id,
+      roleId: req.body.roleId,
     });
 
     res.json({ message: "User updated" });
@@ -36,6 +37,7 @@ exports.putUser = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
+  tokenChecker(req, res, next);
   try {
     checkValue(req.body, res, "deleteUser");
     const { id } = req.body;
@@ -56,6 +58,7 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.getAllUsers = async (req, res) => {
+  tokenChecker(req, res, next);
   try {
     models.User.findAll({ raw: true }).then((allUsers) => {
       checkValue(allUsers, res, "getAllUsers");
