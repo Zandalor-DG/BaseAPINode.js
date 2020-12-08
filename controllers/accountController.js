@@ -9,8 +9,7 @@ exports.signUp = async (req, res) => {
     const candidate = await models.User.findOne({ where: { email: email } });
 
     if (candidate) {
-      res.status(400).json({ message: "Email already used" });
-      return;
+      throw new Error("Email already used");
     }
     const passwordHash = bcrypt.hashSync(password, 10);
 
@@ -23,7 +22,7 @@ exports.signUp = async (req, res) => {
     });
     res.json({ message: "User created" });
   } catch (err) {
-    res.status(500).json({ message: "server error, please try again", err });
+    res.status(400).json({ message: err });
   }
 };
 
@@ -39,7 +38,7 @@ exports.signIn = async (req, res) => {
     if (!isMatch)
       return res.status(400).json({ message: "incorrect password" });
 
-    const tokens = await updateTokens(user.id);
+    const tokens = await updateTokens(user.id); //проверка токена возможна
     const roleUserAuth = await models.Role.findByPk(user.roleId);
 
     const userData = {

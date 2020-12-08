@@ -11,7 +11,15 @@ exports.putUser = async (req, res) => {
   try {
     const newRole = models.Role.findOne({ where: { id: req.body.roleId } });
 
-    checkValue(newRole, res, "putUser");
+    if (
+      !req.body.fullName ||
+      !req.body.email ||
+      !req.body.password ||
+      !req.body.dob ||
+      !newRole.id
+    ) {
+      throw new Error("Data put user is not presented");
+    }
 
     models.User.update({
       fullName: req.body.fullName,
@@ -23,7 +31,7 @@ exports.putUser = async (req, res) => {
 
     res.json({ message: "User updated" });
   } catch (err) {
-    res.status(500).json({ message: "server error, please try again", err });
+    res.status(400).json({ message: err.message });
   }
 };
 
