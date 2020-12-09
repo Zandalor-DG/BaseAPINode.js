@@ -20,7 +20,7 @@ exports.signUp = async (req, res) => {
       dob: dob,
       roleId: 3,
     });
-    res.json({ message: "User created" });
+    res.status(201).json({ message: "User created" });
   } catch (err) {
     res.status(400).json({ message: err });
   }

@@ -1,5 +1,6 @@
 const models = require("../database/models");
 const tokenChecker = require("../middleware/tokenChecker");
+const bcrypt = require("bcryptjs");
 
 const checkValue = (valueCheck, response, method) => {
   if (!valueCheck) {
@@ -11,32 +12,28 @@ const checkValue = (valueCheck, response, method) => {
 exports.putUser = async (req, res, next) => {
   try {
     tokenChecker(req, res, next);
-
-    if (
-      !req.body.fullName ||
-      !req.body.email ||
-      !req.body.password ||
-      !req.body.dob ||
-      !req.body.roleId
-    ) {
+    const { fullName, email, password, dob, roleId } = req.body;
+    if (!fullName & !email & !password & !dob & !roleId) {
       throw new Error("Data put user is not presented");
     }
 
-    models.User.update({
-      fullName: req.body.fullName,
-      email: req.body.email,
-      password: req.body.password,
-      dob: req.body.dob,
-      roleId: req.body.roleId,
-    });
-
-    res.json({ message: "User updated" });
+    models.User.update(
+      {
+        fullName: fullName,
+        email: email,
+        password: bcrypt.hashSync(password, 10),
+        dob: dob,
+        roleId: roleId,
+      },
+      { where: { email: email } }
+    );
+    res.status(200).json({ message: "user update" });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
 
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res, next) => {
   tokenChecker(req, res, next);
   try {
     checkValue(req.body, res, "deleteUser");
@@ -47,7 +44,7 @@ exports.deleteUser = async (req, res) => {
 
     models.User.destroy({
       where: {
-        id: req.body.id,
+        id: id,
       },
     });
 
@@ -57,16 +54,12 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-exports.getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res, next) => {
   tokenChecker(req, res, next);
   try {
-    models.User.findAll({ raw: true }).then((allUsers) => {
-      checkValue(allUsers, res, "getAllUsers");
-      res.json(allUsers);
-    });
-
-    res.json({ message: "All users" });
+    const allUsers = await models.User.findAll({ raw: true });
+    res.json({ message: "All users", allUsers });
   } catch (err) {
-    res.status(500).json({ message: "server error, please try again", err });
+    res.status(500);
   }
 };
