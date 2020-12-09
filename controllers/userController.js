@@ -13,7 +13,7 @@ exports.putUser = async (req, res, next) => {
   try {
     tokenChecker(req, res, next);
     const { fullName, email, password, dob, roleId } = req.body;
-    if (!fullName & !email & !password & !dob & !roleId) {
+    if (!fullName && !email && !password && !dob && !roleId) {
       throw new Error("Data put user is not presented");
     }
 
